@@ -4,9 +4,13 @@ import { UserController } from './user.controller';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {UserEntity} from "./user.entity";
 import {JwtModule} from "@nestjs/jwt";
+import {MulterModule} from "@nestjs/platform-express";
 
 @Module({
   imports: [
+    MulterModule.register({
+      dest: '../../uploads/user',
+    }),
     TypeOrmModule.forFeature([UserEntity]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,

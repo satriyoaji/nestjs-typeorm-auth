@@ -10,6 +10,22 @@ export class UserService {
     ) {
     }
 
+    async findAll(): Promise<UserEntity[]> {
+        try {
+            return await this.userRepository.find()
+        } catch (err) {
+            return err.sqlMessage
+        }
+    }
+
+    async findOne(condition: any): Promise<UserEntity> {
+        try {
+            return await this.userRepository.findOne(condition)
+        } catch (err) {
+            return err.sqlMessage
+        }
+    }
+
     async create(data: any) {
         try {
             return await this.userRepository.save(data)
@@ -19,12 +35,4 @@ export class UserService {
         }
     }
 
-    async findOne(condition: any): Promise<UserEntity> {
-        try {
-            return await this.userRepository.findOne(condition)
-        } catch (err) {
-            // console.log(err)
-            return err.sqlMessage
-        }
-    }
 }

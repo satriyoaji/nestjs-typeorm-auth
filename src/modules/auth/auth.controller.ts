@@ -31,7 +31,7 @@ export class AuthController {
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const user = await this.userService.create({
-             name,
+            name,
             email,
             password: hashedPassword
         });
