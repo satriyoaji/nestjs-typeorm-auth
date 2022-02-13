@@ -1,13 +1,24 @@
-import {BadRequestException, Body, Controller, Get, Post, Req, Res, UnauthorizedException} from "@nestjs/common";
-import {AuthService} from "../auth/auth.service";
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Get,
+    Post,
+    Req,
+    Res,
+    UnauthorizedException,
+    UseGuards
+} from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
 import {Response, Request} from "express";
 import {JwtService} from "@nestjs/jwt";
+import {UserService} from "../user/user.service";
+import {UserAuthenticated} from "../../guards/userAuthenticated.guard";
 
 @Controller('auth')
 export class AuthController {
     constructor(
-        private readonly authService: AuthService,
+        private readonly userService: UserService,
         private jwtService: JwtService
     ) {}
 
@@ -19,7 +30,7 @@ export class AuthController {
     ) {
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        const user = await this.authService.create({
+        const user = await this.userService.create({
              name,
             email,
             password: hashedPassword
@@ -47,7 +58,7 @@ export class AuthController {
         @Body('password') password: string,
         @Res({passthrough: true}) response: Response //give passthrough to true in order to send the cookie out of this backend
     ) {
-        const user = await this.authService.findOne({email});
+        const user = await this.userService.findOne({email});
 
         if (!user) {
             throw new BadRequestException('invalid credentials');
@@ -66,7 +77,8 @@ export class AuthController {
         };
     }
 
-    @Get('user')
+    @Get('user-logged-in')
+    @UseGuards(UserAuthenticated)
     async user(@Req() request: Request) {
         try {
             console.log(request.cookies)
@@ -78,7 +90,9 @@ export class AuthController {
                 throw new UnauthorizedException();
             }
 
-            const user = await this.authService.findOne({id: data['id']});
+            const user = await this.userService.findOne({
+                id: data['id']
+            });
 
             const {password, ...result} = user;
 
