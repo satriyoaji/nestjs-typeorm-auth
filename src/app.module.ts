@@ -6,6 +6,7 @@ import {ConfigModule} from "@nestjs/config";
 import {UserEntity} from "./modules/user/user.entity";
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
+import { BaseService } from './abstracts/base.service';
 
 @Global()
 @Module({
@@ -27,7 +28,7 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, BaseService],
   exports: []
 })
 export class AppModule {}

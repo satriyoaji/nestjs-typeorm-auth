@@ -73,6 +73,9 @@ export class UserController {
         @Body('password') password: string,
         @UploadedFile() image
     ): Promise<UserEntity|any> {
+        if (!image){
+            throw new BadRequestException('image must existed !');
+        }
         let responseFile = {
             originalName: image.originalname,
             imageName: image.filename,
